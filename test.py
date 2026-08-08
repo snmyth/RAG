@@ -1,6 +1,12 @@
 from pypdf import PdfReader 
 from sentence_transformers import SentenceTransformer
 import chromadb
+from dotenv import load_dotenv
+from openai import OpenAI
+import os
+
+
+
 
 reader = PdfReader("test.pdf")
 
@@ -34,8 +40,45 @@ collection.add(
 )
 
 
-question = "What is Battery life"
+question = input("Enter Your Question")
 enc = model.encode([question])
 result =collection.query(query_embeddings = enc, n_results = 2)
 
 print(result)
+
+load_dotenv()
+
+client_ai = OpenAI(
+    base_url="https://openrouter.ai/api/v1",
+    api_key=os.getenv("OPENROUTER_API_KEY"),
+)
+
+while True:
+    question = input("Enter your question (or 'quit' to exit): ")
+    if question.lower() == "quit":
+        break
+
+    enc = model.encode([question])
+    result = collection.query(query_embeddings=enc, n_results=2)
+
+    context = "\n\n".join(result["documents"][0])
+
+    response = client_ai.chat.completions.create(
+        model="google/gemini-2.5-flash-lite",
+        messages=[
+            {
+                "role": "user",
+                "content": f"""Answer the question using only the context below. If the answer isn't in the context, say you don't know.
+
+Context:
+{context}
+
+Question: {question}"""
+            }
+        ]
+    )
+
+    print(response.choices[0].message.content)
+    print("---")
+
+
