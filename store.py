@@ -24,7 +24,7 @@ def add_to_collection(collection,chunks,embeddings):
 
 
 
-def query_collection(collection, query_embedding, n_results=2):
+def query_collection(collection, query_embedding, n_results=10):
     try:
         results = collection.query(
             query_embeddings=query_embedding,
