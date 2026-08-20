@@ -1,9 +1,9 @@
+from embed import load_model, get_embeddings
 from ingest import load_pdf, chunk_text
 
 text = load_pdf("test.pdf")
-print("TEXT LENGTH:", len(text))
-print("TEXT PREVIEW:", text[:100])
-
 chunks = chunk_text(text)
-print("CHUNKS:", len(chunks))
-print(chunks)
+
+model = load_model()
+embeddings = get_embeddings(model, chunks)
+print(embeddings)
