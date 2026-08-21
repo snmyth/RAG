@@ -1,10 +1,9 @@
 import chromadb
 
-def get_collection(name = "my_pdf"):
-    client = chromadb.Client()
+# store.py
+def get_collection(name="my_pdf"):
+    client = chromadb.PersistentClient(path="./chroma_data")
     collection = client.get_or_create_collection(name)
-
-
     return collection
 
 
